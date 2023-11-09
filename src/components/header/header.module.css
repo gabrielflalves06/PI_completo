@@ -36,19 +36,30 @@
     display: block;
 }
 
-.lista_menu {
+.lista_menu, .lista_fun {
     display: none;
-    position: absolute;
+    position: absolute  ;
     top: 100%;
     width: 10em;
 }
 
-.menu_itens {
+.menu_itens, .menu_itens_fun {
     padding: 1em;
-    background-color: white;
+    background-color: rgb(249, 249, 249);
     list-style-type: none
+}
+
+.menu_itens:hover, .menu_itens_fun:hover{
+    background-color: rgb(243, 243, 243);
 }
 
 .bottom{
     display: none;
+}
+
+.lista_menu:hover~.lista_fun, .lista_fun:hover  {
+    display: block;
+    right: 11%;
+    position: absolute;
+    z-index: 100;
 }

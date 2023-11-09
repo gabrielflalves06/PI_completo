@@ -22,19 +22,13 @@ export default function Head() {
                 </label>
 
                 <ul className={styles.lista_menu}>
-                    <li className={styles.menu_itens}>
-                        <a href="#" target="centro" className="lista-menu__link">Cadastrar</a>
-                    </li>
-                    <li className={styles.menu_itens}>
-                        <a href="#" target="centro" className="lista-menu__link">Listar</a>
-                    </li>
-                    <li className={styles.menu_itens}>
-                        <a href="#" target="centro" className="lista-menu__link">Deletar</a>
-                    </li>
-                    <li className={styles.menu_itens}>
-                        <a href="#" target="centro" className="lista-menu__link">Editar</a>
-                    </li>
-                </ul>
+                        <li className={styles.menu_itens}>
+                            <a href={"/TabelaFun"} target="centro" className="lista-menu__link">Funcionario</a>
+                        </li>
+                        <li className={styles.menu_itens}>
+                            <a href={"/TabelaDep"} target="centro" className="lista-menu__link">Departamento</a>
+                        </li>
+                    </ul>
             </div>
 
         </div >
