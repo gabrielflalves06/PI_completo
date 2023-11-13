@@ -8,7 +8,7 @@ export default function Head() {
             <div className={styles.slogan}>
                 <Image
                     src="/logo.svg"
-                    alt="Think&Share slogan"
+                    alt="Senac logo"
                     width={130}
                     height={85}
                 />
