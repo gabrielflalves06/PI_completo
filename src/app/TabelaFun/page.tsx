@@ -1,10 +1,24 @@
+'use client'
+
 import Link from "next/link";
 import styles from "./tabela.module.css"
-import { SetStateAction, useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Produtos() {
 
+    const [Funcionario, setFuncionario] = useState([]);
+    const [termoPesquisa, setTermoPesquisa] = useState('');
 
+
+    const filtrarProdutos = () => {
+        return Funcionario.filter((Funcionario) =>
+            Funcionario.nome.toLowerCase().includes(termoPesquisa.toLowerCase()) ||
+            Funcionario.Email.toLowerCase().includes(termoPesquisa.toLowerCase()) ||
+            Funcionario.Cargo.toLowerCase().includes(termoPesquisa.toLowerCase())
+        );
+    }
+
+    
     return (
 
 
@@ -18,10 +32,7 @@ export default function Produtos() {
                     </div>
                     <div className={styles.buscaEcadastro}>
                         <div className={styles.pesquisa}>
-                            <input
-                                type="text"
-                                placeholder="Pesquisar por:nome, E-mail ou Cargo"
-                            />
+                            <input type="text" placeholder="Pesquisar por:nome, E-mail ou Cargo" value={termoPesquisa} onChange={(e) => setTermoPesquisa(e.target.value)} />
                         </div>
 
                         <Link href="/cadastroFun">
@@ -41,36 +52,30 @@ export default function Produtos() {
                             Cadastrar funcionario</Link>
                     </div>
                     <div className={styles.tabelaProduto}>
-                        <table>
-                            <tr>
-                                <th>Nome</th>
-                                <th>E-mail</th>
-                                <th>Cargo</th>
-                                <th>Telefone</th>
-                                <th>Salário</th>
-                                <th>ID do Departamento</th>
-                                <th></th>
-                            </tr>
+                        {filtrarProdutos().length === 0 ? (
+                            <p>Nenhum funcionario encontrado =&#40;</p>
+                        ) : (
+                            <table>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>E-mail</th>
+                                    <th>Cargo</th>
+                                    <th>Telefone</th>
+                                    <th>Salário</th>
+                                    <th>ID do Departamento</th>
+                                    <th></th>
+                                </tr>
+                                {filtrarProdutos().map((produto) => (
+                                    <tr className={styles.Conteudo}>
+                                        <td className={styles.primeiro}>{Funcionario.nome}</td>
+                                        <td>{Funcionario.Email}</td>
+                                        <td>{Funcionario.Cargo}</td>
+                                        <td>{Funcionario.Telefone}</td>
+                                        <td>{Funcionario.Salário}</td>
+                                        <td>{Funcionario.IdDep}</td>
 
-                            <tr className={styles.Conteudo}>
-                                        <td className={styles.primeiro}>Cleber</td>
-                                        <td>asdasdas</td>
-                                        <td>dasdasda</td>
-                                        <td>dsadasd</td>
-                                        <td>R$ 1000</td>
-                                        <td>dasdasdasd</td>
-                                        <td className={styles.final}><button>
-                                            <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path
-                                                    d="M18.3335 15H21.6668V11.6667H18.3335M20.0002 33.3333C12.6502 33.3333 6.66683 27.35 6.66683 20C6.66683 12.65 12.6502 6.66667 20.0002 6.66667C27.3502 6.66667 33.3335 12.65 33.3335 20C33.3335 27.35 27.3502 33.3333 20.0002 33.3333ZM20.0002 3.33333C17.8115 3.33333 15.6442 3.76443 13.6221 4.60201C11.6 5.43958 9.76269 6.66724 8.21505 8.21489C5.08944 11.3405 3.3335 15.5797 3.3335 20C3.3335 24.4203 5.08944 28.6595 8.21505 31.7851C9.76269 33.3328 11.6 34.5604 13.6221 35.398C15.6442 36.2356 17.8115 36.6667 20.0002 36.6667C24.4204 36.6667 28.6597 34.9107 31.7853 31.7851C34.9109 28.6595 36.6668 24.4203 36.6668 20.0002C36.6668 17.8113 36.2357 15.644 35.3982 13.6219C34.5606 11.5998 33.3329 9.76253 31.7853 8.21505C30.2376 6.66741 28.4003 5.43975 26.3782 4.60217C24.3561 3.76459 22.1889 3.33333 20.0002 3.33333ZM18.3335 28.3333H21.6668V18.3333H18.3335V28.3333Z"
-                                                    fill="black" />
-                                                <path
-                                                    d="M18.333 15.0002H21.6663V11.6668H18.333M19.9997 33.3335C12.6497 33.3335 6.66634 27.3502 6.66634 20.0002C6.66634 12.6502 12.6497 6.66683 19.9997 6.66683C27.3497 6.66683 33.333 12.6502 33.333 20.0002C33.333 27.3502 27.3497 33.3335 19.9997 33.3335ZM19.9997 3.3335C17.811 3.3335 15.6437 3.76459 13.6216 4.60217C11.5995 5.43975 9.7622 6.66741 8.21456 8.21505C5.08896 11.3407 3.33301 15.5799 3.33301 20.0002C3.33301 24.4204 5.08896 28.6597 8.21456 31.7853C9.7622 33.3329 11.5995 34.5606 13.6216 35.3982C15.6437 36.2357 17.811 36.6668 19.9997 36.6668C24.4199 36.6668 28.6592 34.9109 31.7848 31.7853C34.9104 28.6597 36.6663 24.4204 36.6663 20.0002C36.6663 17.8115 36.2352 15.6442 35.3977 13.6221C34.5601 11.6 33.3324 9.76269 31.7848 8.21505C30.2371 6.66741 28.3998 5.43975 26.3777 4.60217C24.3556 3.76459 22.1884 3.3335 19.9997 3.3335ZM18.333 28.3335H21.6663V18.3335H18.333V28.3335Z"
-                                                    fill="black" />
-                                            </svg>
-                                        </button>
-
-                                            <button>
+                                        <td className={styles.final}>
+                                            <button onClick={() => { alterarproduto(produto) }}>
                                                 <svg width="40" height="40" viewBox="0 0 40 40" fill="none"
                                                     xmlns="http://www.w3.org/2000/svg">
                                                     <path
@@ -79,7 +84,8 @@ export default function Produtos() {
                                                         stroke-linejoin="round" />
                                                 </svg>
                                             </button>
-                                            <button>
+
+                                            <button onClick={() => openConfirmation(produto)}>
                                                 <svg width="40" height="40" viewBox="0 0 40 40" fill="none"
                                                     xmlns="http://www.w3.org/2000/svg">
                                                     <path
@@ -89,7 +95,9 @@ export default function Produtos() {
                                             </button>
                                         </td>
                                     </tr>
-                        </table>
+                                ))}
+                            </table>
+                        )}
                     </div>
                 </div>
             </main>
