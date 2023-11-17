@@ -27,10 +27,10 @@ export default function Cadastro() {
                 },
             };
 
-            if (nomeFun == null || Email == null || Telefone == null || Cargo == null || Salário == null || IdDep == null) {
+            if (nomeFun ?? Email ?? Telefone ?? Cargo ?? Salário ?? IdDep) {
                 console.log('Enviando dados para o backend...');
-                const resposta = await api.post('/produto/', body);
-                console.log('Resposta do backend:', resposta.data);
+                /* const resposta = await api.post('/produto/', body); */
+                /* console.log('Resposta do backend:', resposta.data); */
             }
         } catch (erro) {
             console.error('Erro ao enviar para o banco de dados:', erro);

@@ -19,6 +19,11 @@ export default function Cadastro() {
                     IdDep: IdDep,
                 },
             };
+            if (nomeDep ?? Telefone ?? IdDep) {
+                console.log('Enviando dados para o backend...');
+                /* const resposta = await api.post('/produto/', body); */
+                /* console.log('Resposta do backend:', resposta.data); */
+            }
         } catch (erro) {
             console.error('Erro ao enviar para o banco de dados:', erro);
         }

@@ -2,23 +2,97 @@
 
 import Link from "next/link";
 import styles from "./tabela.module.css"
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/router";
 
 export default function Produtos() {
 
     const [Funcionario, setFuncionario] = useState([]);
     const [termoPesquisa, setTermoPesquisa] = useState('');
+    const [texto, setTexto] = useState('');
+    const [modalAberto, setModalAberto] = useState(false);
+    const [id, setID] = useState("")
+    const router = useRouter();
+
+    const caixaDeDialogo = useRef(null);
+
+    const [showConfirmation, setShowConfirmation] = useState(false);
+    const [FunToDelete, setFunToDelete] = useState(null);
+
+    useEffect(() => {
+        caixaDeDialogo.current = document.getElementById("CaixaDeDialogo");
+    }, []);
+
+    const openConfirmation = (produto) => {
+        setFunToDelete(produto);
+        if (caixaDeDialogo.current) {
+            caixaDeDialogo.current.showModal();
+        }
+        setShowConfirmation(true);
+    };
+
+    const closeConfirmation = () => {
+        setShowConfirmation(false);
+    };
+
+    const closeAndResetConfirmation = () => {
+        closeConfirmation();
+        setFunToDelete(null);
+    };
 
 
-    const filtrarProdutos = () => {
-        return Funcionario.filter((Funcionario) =>
-            Funcionario.nome.toLowerCase().includes(termoPesquisa.toLowerCase()) ||
-            Funcionario.Email.toLowerCase().includes(termoPesquisa.toLowerCase()) ||
-            Funcionario.Cargo.toLowerCase().includes(termoPesquisa.toLowerCase())
-        );
+    const fecharModal = () => {
+        if (caixaDeDialogo.current) {
+            caixaDeDialogo.current.close();
+        }
+    };
+
+    const mostrarModal = () => {
+        if (caixaDeDialogo.current) {
+            caixaDeDialogo.current.showModal();
+        }
+    };
+
+    async function excluirProduto() {
+        if (FunToDelete) {
+            try {
+                await api.delete(`/produto/${FunToDelete.id}`); /* substituir pelo caminho da api */
+                listarProduto();
+                closeConfirmation();
+            } catch (error) {
+                console.error('Erro ao excluir produto:', error);
+                setTexto('Ocorreu um erro ao excluir o produto!');
+                mostrarModal();
+            }
+        }
     }
 
-    
+    async function alterarFun(funcionario) {
+        router.push("/alterar", funcionario.id); /* substituir pelo caminho da api */
+    }
+
+    async function listarProduto() {
+        let r = await api.get('/produto/listar/'); /* substituir pelo caminho da api */
+        let funcionarios = r.data;
+
+        setFuncionario(funcionarios);
+    }
+
+    const filtrarFun = () => {
+        return Funcionario.filter((funcionario) =>
+            funcionario.nome.toLowerCase().includes(termoPesquisa.toLowerCase()) ||
+            funcionario.cargo.toLowerCase().includes(termoPesquisa.toLowerCase()) ||
+            funcionario.IdDep.toLowerCase().includes(termoPesquisa.toLowerCase())
+        );
+    };
+
+    useEffect(() => {
+
+        listarProduto();
+
+    }, [])
+
+
     return (
 
 
@@ -27,6 +101,17 @@ export default function Produtos() {
 
             <main>
                 <div className={styles.mainConteudo}>
+                    <dialog open={modalAberto} className="modalDialog">
+                        <p>{texto}</p>
+                        <button id="botaoSim" onClick={fecharModal}>
+                            Sim
+                        </button>
+                        <button id="botaoNao" onClick={fecharModal}>
+                            Não
+                        </button>
+                        <div className="backDrop"></div>
+                    </dialog>
+
                     <div className={styles.titulo}>
                         <h1>Funcionarios</h1>
                     </div>
@@ -52,7 +137,7 @@ export default function Produtos() {
                             Cadastrar funcionario</Link>
                     </div>
                     <div className={styles.tabelaProduto}>
-                        {filtrarProdutos().length === 0 ? (
+                        {filtrarFun().length === 0 ? (
                             <p>Nenhum funcionario encontrado =&#40;</p>
                         ) : (
                             <table>
@@ -65,7 +150,7 @@ export default function Produtos() {
                                     <th>ID do Departamento</th>
                                     <th></th>
                                 </tr>
-                                {filtrarProdutos().map((produto) => (
+                                {filtrarFun().map((funcionario) => (
                                     <tr className={styles.Conteudo}>
                                         <td className={styles.primeiro}>{Funcionario.nome}</td>
                                         <td>{Funcionario.Email}</td>
@@ -75,7 +160,7 @@ export default function Produtos() {
                                         <td>{Funcionario.IdDep}</td>
 
                                         <td className={styles.final}>
-                                            <button onClick={() => { alterarproduto(produto) }}>
+                                            <button onClick={() => { alterarFun(funcionario) }}>
                                                 <svg width="40" height="40" viewBox="0 0 40 40" fill="none"
                                                     xmlns="http://www.w3.org/2000/svg">
                                                     <path
@@ -85,7 +170,7 @@ export default function Produtos() {
                                                 </svg>
                                             </button>
 
-                                            <button onClick={() => openConfirmation(produto)}>
+                                            <button onClick={() => openConfirmation(funcionario)}>
                                                 <svg width="40" height="40" viewBox="0 0 40 40" fill="none"
                                                     xmlns="http://www.w3.org/2000/svg">
                                                     <path
@@ -101,8 +186,14 @@ export default function Produtos() {
                     </div>
                 </div>
             </main>
+            {showConfirmation && (
+                <dialog open>
+                    <p>Deseja realmente excluir o produto {FunToDelete.nome}?</p>
+                    <button className='sim' onClick={excluirProduto}>Sim</button>
+                    <button className='nao' onClick={closeConfirmation}>Cancelar</button>
+                </dialog>
+            )}
 
-
-        </section>
+        </section >
     );
 }
