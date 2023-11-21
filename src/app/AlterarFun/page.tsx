@@ -1,10 +1,9 @@
 'use client'
 
 import { useState } from "react";
-import styles from "./cadastro.module.css"
+import styles from "./alterar.module.css"
 import api from "../api";
 import Link from "next/link";
-import { useRouter } from 'next/navigation'
 
 export default function Cadastro() {
 
@@ -13,8 +12,30 @@ export default function Cadastro() {
     const [telefone, setTelefone] = useState('');
     const [cargo, setCargo] = useState('');
     const [salario, setSalario] = useState('');
-    const router = useRouter()
     /* const [IdDep, setIdDep] = useState(''); */
+    const [Funcionarios, setFuncionarios] = useState([]);
+
+
+    async function buscarProdutoPorSku(sku: any) {
+        try {
+            console.log('Buscando dados para o SKU:', sku);
+            const resposta = await api.get(`/produto/${sku}`);
+            console.log('Dados recebidos:', resposta.data);
+            const item = resposta.data;
+            const { nome, email, telefone, cargo, salario} = item;
+
+            setNomeFun(nome);
+            setEmail(email);
+            setTelefone(telefone);
+            setCargo(cargo);
+            setSalario(salario);
+            
+
+            setFuncionarios(resposta.data);
+        } catch (error) {
+            console.error('Erro ao buscar dados', error);
+        }
+    }
 
     async function enviar(e: { preventDefault: () => void; }) {
         try {
@@ -34,7 +55,6 @@ export default function Cadastro() {
             });
 
             console.log('Resposta do backend:', resposta.data);
-            router.push("/TabelaFun")
         } catch (erro) {
             console.log('Erro ao enviar para o banco de dados', erro);
         }
@@ -57,8 +77,7 @@ export default function Cadastro() {
                                 Voltar</h1>
                         </Link>
                     </div>
-
-                    <h1>Cadastro de funcionario</h1>
+                    <h1>Alterar funcionario</h1>
 
                     <form className={styles.cadastro}>
 
