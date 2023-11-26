@@ -1,43 +1,50 @@
 'use client'
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./alterar.module.css"
-import api from "../api";
+import api from "../../api";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+
 
 export default function Cadastro() {
-
     const [nomeFun, setNomeFun] = useState('');
     const [email, setEmail] = useState('');
     const [telefone, setTelefone] = useState('');
     const [cargo, setCargo] = useState('');
     const [salario, setSalario] = useState('');
-    /* const [IdDep, setIdDep] = useState(''); */
     const [Funcionarios, setFuncionarios] = useState([]);
+    const router = useRouter();
+    const [id, setId] = useState(null);
 
+    useEffect(() => {
+        if (router.query?.id) {
+            const id = router.query?.id;
+            buscarID(id);
+        }
+    }, [router.query?.id]);
 
-    async function buscarProdutoPorSku(sku: any) {
+    async function buscarID(ID) {
         try {
-            console.log('Buscando dados para o SKU:', sku);
-            const resposta = await api.get(`/produto/${sku}`);
+            console.log('Buscando dados para o ID:', ID);
+            const resposta = await api.get(`/Funcionarios/${ID}`);
             console.log('Dados recebidos:', resposta.data);
             const item = resposta.data;
-            const { nome, email, telefone, cargo, salario} = item;
+            const { nome, email, telefone, cargo, salario } = item;
 
             setNomeFun(nome);
             setEmail(email);
             setTelefone(telefone);
             setCargo(cargo);
             setSalario(salario);
-            
-
+            setId(ID);
             setFuncionarios(resposta.data);
         } catch (error) {
             console.error('Erro ao buscar dados', error);
         }
     }
 
-    async function enviar(e: { preventDefault: () => void; }) {
+    async function enviar(e) {
         try {
             e.preventDefault();
 
@@ -46,7 +53,7 @@ export default function Cadastro() {
                 return;
             }
 
-            const resposta = await api.post('/Funcionarios', {
+            const resposta = await api.put(`/Funcionarios/${id}`, {
                 nome: nomeFun,
                 email: email.toString(),
                 telefone: telefone.toString(),
@@ -59,7 +66,6 @@ export default function Cadastro() {
             console.log('Erro ao enviar para o banco de dados', erro);
         }
     }
-
 
     return (
         <main className={styles.main}>
@@ -78,7 +84,7 @@ export default function Cadastro() {
                         </Link>
                     </div>
                     <h1>Alterar funcionario</h1>
-
+                    
                     <form className={styles.cadastro}>
 
                         <label htmlFor="nomeFun">Nome:</label>
@@ -96,10 +102,6 @@ export default function Cadastro() {
                         <label htmlFor="sal">Salário:</label>
                         <input type="number" id="sal" name="sal" value={salario} onChange={(e) => setSalario(e.target.value)} required /><br />
 
-
-                        {/* <label htmlFor="IdDep">ID do Departamento:</label>
-                        <input type="text" id="IdDep" name="IdDep" value={IdDep} onChange={(e) => setIdDep(e.target.value)} required /><br />
- */}
                         <button type="button" onClick={enviar}>Cadastrar</button>
 
                     </form>

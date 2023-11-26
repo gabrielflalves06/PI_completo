@@ -8,7 +8,7 @@ export default function Cadastro() {
     const [Telefone, setTelefone] = useState('');
     const [IdDep, setIdDep] = useState('');
 
-    async function enviar(e) {
+    async function enviar(e: any) {
         try {
             console.log('Função enviar acionada!');
             e.preventDefault();
